@@ -1,50 +1,62 @@
-var SIZE_X = 1000;
-var SIZE_Y = 1000;
-
-var canvas = document.getElementById("canvas").getContext("2d");
-canvas.fillRect(0, 0, SIZE_X, SIZE_Y);
+var SIZE_X = 3000;
+var SIZE_Y = 2000;
+var CHANGE_COLOR_INTERVAL = 2000;
+var NUM_WALKERS = 2000;
 
 var iteration = 0;
-var position = new Position();
+var positions = setupPositionsArray(NUM_WALKERS);
+
+for (i = 0; i < positions.length; i++) {
+    positions[i].changeColor();
+}
 
 start();
 
 
 function start() {
     console.log(iteration);
-    if (iteration % 2000 === 0) {
-        position.changeColor();
-    }
+    // if (iteration % CHANGE_COLOR_INTERVAL === 0) {
+    //     for (i = 0; i < positions.length; i++) {
+    //         positions[i].changeColor();
+    //     }
+    // }
 
-    position.draw();
-
-    var direction = Math.floor((Math.random() * 4));
-
-    switch (direction) {
-        case 0:
-            position.up();
-            break;
-        case 1:
-            position.down();
-            break;
-        case 2:
-            position.left();
-            break;
-        case 3:
-            position.right();
-            break;
+    for (i = 0; i < positions.length; i++) {
+        positions[i].draw();
+        positions[i].chooseDirection();
     }
 
     iteration++;
     setTimeout(start, 0);
 }
 
-function Position() {
-    this.x = SIZE_X / 2;
-    this.y = SIZE_Y / 2;
+function setupPositionsArray(numberOfPositions) {
+    var array = [];
+
+    for (i = 0; i < numberOfPositions; i++) {
+        array[i] = new Position(
+            Math.floor((Math.random() * SIZE_X)),
+            Math.floor((Math.random() * SIZE_Y))
+        );
+    }
+
+    return array;
+}
+
+function Position(x, y) {
+    this.x = x;
+    this.y = y;
+    this.canvas = document.getElementById("canvas").getContext("2d");
 
     this.draw = function () {
-        canvas.fillRect(this.x, this.y, 1, 1);
+        this.canvas.fillStyle = 'rgb(' + this.red + ', ' + this.green + ', ' + this.blue + ')';
+        this.canvas.fillRect(this.x, this.y, 1, 1);
+    }
+
+    this.changeColor = function () {
+        this.red = Math.floor((Math.random() * 256));
+        this.green = Math.floor((Math.random() * 256));
+        this.blue = Math.floor((Math.random() * 256));
     }
 
     this.up = function () {
@@ -71,11 +83,22 @@ function Position() {
         }
     }
 
-    this.changeColor = function () {
-        var red = Math.floor((Math.random() * 256));
-        var green = Math.floor((Math.random() * 256));
-        var blue = Math.floor((Math.random() * 256));
+    this.chooseDirection = function () {
+        var direction = Math.floor((Math.random() * 4));
 
-        canvas.fillStyle = 'rgb(' + red + ', ' + green + ', ' + blue + ')';
+        switch (direction) {
+            case 0:
+                this.up();
+                break;
+            case 1:
+                this.down();
+                break;
+            case 2:
+                this.left();
+                break;
+            case 3:
+                this.right();
+                break;
+        }
     }
 }
