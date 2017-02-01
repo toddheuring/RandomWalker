@@ -1,6 +1,5 @@
 var SIZE_X = 3000;
 var SIZE_Y = 2000;
-var CHANGE_COLOR_INTERVAL = 2000;
 var NUM_WALKERS = 2000;
 
 var iteration = 0;
@@ -15,11 +14,6 @@ start();
 
 function start() {
     console.log(iteration);
-    // if (iteration % CHANGE_COLOR_INTERVAL === 0) {
-    //     for (i = 0; i < positions.length; i++) {
-    //         positions[i].changeColor();
-    //     }
-    // }
 
     for (i = 0; i < positions.length; i++) {
         positions[i].draw();
