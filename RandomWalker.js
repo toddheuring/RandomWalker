@@ -9,7 +9,6 @@ var position = new Position();
 
 start();
 
-
 function start() {
     console.log(iteration);
     if (iteration % 2000 === 0) {
