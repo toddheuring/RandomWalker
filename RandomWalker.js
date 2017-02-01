@@ -1,43 +1,49 @@
 var SIZE_X = 1000;
 var SIZE_Y = 1000;
 
-var canvas = document.getElementById("canvas").getContext("2d");
-canvas.fillRect(0, 0, SIZE_X, SIZE_Y);
-
 var iteration = 0;
 var position = new Position();
+var pause = false;
+
+var canvas = document.getElementById("canvas").getContext("2d");
+resetCanvas();
 
 start();
 
 
 function start() {
-    console.log(iteration);
-    if (iteration % 2000 === 0) {
-        position.changeColor();
+    if (!pause) {
+        console.log(iteration);
+        
+        if (iteration % 2000 === 0) {
+            position.changeColor();
+        }
+
+        position.draw();
+
+        var direction = Math.floor((Math.random() * 4));
+
+        switch (direction) {
+            case 0:
+                position.up();
+                break;
+            case 1:
+                position.down();
+                break;
+            case 2:
+                position.left();
+                break;
+            case 3:
+                position.right();
+                break;
+        }
+
+        iteration++;
     }
 
-    position.draw();
-
-    var direction = Math.floor((Math.random() * 4));
-
-    switch (direction) {
-        case 0:
-            position.up();
-            break;
-        case 1:
-            position.down();
-            break;
-        case 2:
-            position.left();
-            break;
-        case 3:
-            position.right();
-            break;
-    }
-
-    iteration++;
     setTimeout(start, 0);
 }
+
 
 function Position() {
     this.x = SIZE_X / 2;
@@ -78,4 +84,23 @@ function Position() {
 
         canvas.fillStyle = 'rgb(' + red + ', ' + green + ', ' + blue + ')';
     }
+}
+
+function onKeyPress(event) {
+    var key = event.keyCode;
+
+    switch (key) {
+        case 32: // space
+            pause = pause ? false : true;
+            break;
+        case 114: // r
+            resetCanvas();
+            break;
+    }
+}
+
+function resetCanvas() {
+    canvas.fillStyle = 'black';
+    canvas.fillRect(0, 0, SIZE_X, SIZE_Y);
+    iteration = 0;
 }
