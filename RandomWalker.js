@@ -1,6 +1,6 @@
-var SIZE_X = 11520;
-var SIZE_Y = 2160;
-var NUM_WALKERS = 1000;
+var SIZE_X = 1000;
+var SIZE_Y = 1000;
+var NUM_WALKERS = 100;
 
 var iteration = 0;
 var positions = setupPositionsArray(NUM_WALKERS);
@@ -108,11 +108,14 @@ function onKeyPress(event) {
     var key = event.keyCode;
 
     switch (key) {
-        case 112: // space
+        case 112: // p -pause
             pause = pause ? false : true;
             break;
-        case 114: // r
+        case 114: // r -reset
             resetCanvas();
+            break;
+        case 115: //s -save (opens new tab to save image)
+            window.open(document.getElementById("canvas").toDataURL());
             break;
     }
 }
