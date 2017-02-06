@@ -1,26 +1,33 @@
-var SIZE_X = 1000;
-var SIZE_Y = 1000;
-var NUM_WALKERS = 100;
+var SIZE_X = 5000;
+var SIZE_Y = 3000;
+var NUM_WALKERS = 1000;
+var COLOR_CHANGE_INTERVAL = -1;
 
-var iteration = 0;
-var positions = setupPositionsArray(NUM_WALKERS);
-var pause = false;
+var screen = document.getElementById("canvas");
+screen.width = SIZE_X;
+screen.height = SIZE_Y;
 
-var canvas = document.getElementById("canvas").getContext("2d");
+var canvas = screen.getContext("2d");
 resetCanvas();
 
-for (i = 0; i < positions.length; i++) {
-    positions[i].changeColor();
-}
-
-walk();
+var positions = setupPositionsArray(NUM_WALKERS);
+var pause = false;
+var stop = false;
 
 
-function walk() {
+main();
+
+
+function main() {
     if (!pause) {
         console.log(iteration);
 
         for (i = 0; i < positions.length; i++) {
+            // if (iteration % COLOR_CHANGE_INTERVAL === 0) {
+            if (iteration === 0) {
+                positions[i].changeColor();
+            }
+
             positions[i].draw();
             positions[i].chooseDirection();
         }
@@ -28,7 +35,9 @@ function walk() {
         iteration++;
     }
 
-    setTimeout(walk, 0);
+    if (!stop) {
+        setTimeout(main, 0);
+    }
 }
 
 function setupPositionsArray(numberOfPositions) {
@@ -47,7 +56,7 @@ function setupPositionsArray(numberOfPositions) {
 function Position(x, y) {
     this.x = x;
     this.y = y;
-    this.canvas = document.getElementById("canvas").getContext("2d");
+    this.canvas = canvas;
 
     this.draw = function () {
         this.canvas.fillStyle = 'rgb(' + this.red + ', ' + this.green + ', ' + this.blue + ')';
@@ -56,8 +65,27 @@ function Position(x, y) {
 
     this.changeColor = function () {
         this.red = Math.floor((Math.random() * 256));
-        this.green = Math.floor((Math.random() * 256));
+        this.green = 0;//Math.floor((Math.random() * 256));
         this.blue = Math.floor((Math.random() * 256));
+    }
+
+    this.chooseDirection = function () {
+        var direction = Math.floor((Math.random() * 4));
+
+        switch (direction) {
+            case 0:
+                this.up();
+                break;
+            case 1:
+                this.down();
+                break;
+            case 2:
+                this.left();
+                break;
+            case 3:
+                this.right();
+                break;
+        }
     }
 
     this.up = function () {
@@ -84,24 +112,6 @@ function Position(x, y) {
         }
     }
 
-    this.chooseDirection = function () {
-        var direction = Math.floor((Math.random() * 4));
-
-        switch (direction) {
-            case 0:
-                this.up();
-                break;
-            case 1:
-                this.down();
-                break;
-            case 2:
-                this.left();
-                break;
-            case 3:
-                this.right();
-                break;
-        }
-    }
 }
 
 function onKeyPress(event) {
@@ -110,12 +120,24 @@ function onKeyPress(event) {
     switch (key) {
         case 112: // p -pause
             pause = pause ? false : true;
+            console.log("paused/unpaused");
             break;
         case 114: // r -reset
             resetCanvas();
+            stop = false;
+            main();
+            console.log("reset");
             break;
-        case 115: //s -save (opens new tab to save image)
-            window.open(document.getElementById("canvas").toDataURL());
+        case 115: //s -save (downloads png)
+            var image = screen.toDataURL();
+            var button = document.getElementById("button");
+            button.href = image;
+            button.click();
+            console.log("saved image");
+            break;
+        case 120: //x -stop
+            stop = true;
+            console.log("stopped");
             break;
     }
 }
